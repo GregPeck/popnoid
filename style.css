@@ -32,7 +32,7 @@ body{
   position:fixed
 }
 .portal::before, .portal::after {
-  background-image: url("p.png");
+  background-image: url("assets/p.png");
   content: "";
   height: 20px;
   left: -2px;
@@ -44,7 +44,7 @@ body{
   bottom: 0;
 }
 .portal {
-  background: url("p.png") -24px 0 repeat-y;
+  background: url("assets/p.png") -24px 0 repeat-y;
   height: 160px;
   transition: height 2s linear 0s;
   width: 8px;
