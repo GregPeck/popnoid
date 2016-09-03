@@ -234,7 +234,7 @@ BRICK = function(x, y, type) {
 					setTimeout("GAME.endLevel(true)",3000);
 				}
 				this.type = "0";
-				// 1 un 3 chance to add a bonus. (Only if there's not already 3 bonus in game)
+				// 1 on 3 chance to add a bonus. (Only if there's not already 3 bonus in game)
 				if (Math.random()*10<3 && GAME.bonus.length<=3) {
 					var chance = Math.round(Math.random()*100);
 					var chanceCount = 0;
@@ -1768,6 +1768,9 @@ displayInGame = function() {
 initBoard = function() {
 	for (var i=0; i<imgsNames.length; i++) {
 		imgs[imgsNames[i]] = new Image(); 
+		imgs[imgsNames[i]].onload = function() {
+			displayHome();
+		}
 		imgs[imgsNames[i]].src = imgsNames[i]+".png";
 	}
 
@@ -1781,7 +1784,7 @@ initBoard = function() {
 	for (var i=0; i<100; i++) {
 		drawStar(Math.random()*1920, Math.random()*1080, 10+Math.random()*10, sb);
 	}
-	displayHome();
+	
 	var portalNumber = 0;
 	for (x=0; x<2; x++) {
 		for (var y=12; y<500; y+=160) {
@@ -1894,4 +1897,6 @@ initBoard = function() {
 			GAME.players[0].dropGlueBalls();
 		}
 	}
+	console.log("displayHome", sp);
+	displayHome();
 }
