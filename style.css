@@ -1,0 +1,108 @@
+#all,#board,#speech{
+  width:898px;
+  margin:0 auto
+}
+#speech,body.inGame #board{
+  display:block
+}
+#board,#speech,.portal{
+  z-index:100
+}
+#bonus,.portal,body.inGame #speech{
+  position:absolute
+}
+body{
+  margin:0
+}
+#board,#game,#speech{
+  position:relative
+}
+#game{
+  height:500px;
+  width:476px;
+  padding:12px
+}
+#board{
+  display:none
+}
+#bg{
+  width:1920px;
+  height:1080px;
+  background-color:#2E0150;
+  position:fixed
+}
+.portal::before, .portal::after {
+  background-image: url("p.png");
+  content: "";
+  height: 20px;
+  left: -2px;
+  position: absolute;
+  width: 12px;
+}
+.portal::after {
+  background-position: -12px 0;
+  bottom: 0;
+}
+.portal {
+  background: url("p.png") -24px 0 repeat-y;
+  height: 160px;
+  transition: height 2s linear 0s;
+  width: 8px;
+}
+.portal.opened{
+  height:116px
+}
+.portal.bottom::after{
+  content: none;
+}
+.portal.bottom{
+  height:20px
+}
+#bonus{
+  color:#fff;
+  left:516px;
+  padding:10px;
+  top:257px;
+  height:98px;
+  border:6px solid #ccd;
+  border-color:#ccd #668 #668 #bbc;
+  box-shadow:0 0 1px rgba(0,0,0,1) inset
+}
+#bonus>div{
+  float:left;
+  margin:0 5px;
+  vertical-align:baseline;
+  background-color:#fff;
+  border:2px solid #333;
+  display:inline-block;
+  height:73px;
+  position:relative;
+  width:17px
+}
+#bonus>div>*{
+  background-image:-webkit-linear-gradient(bottom,#85FF85 0,#FD3131 50px);
+  background-image:-moz-linear-gradient(center bottom ,#85FF85 0,#FD3131 50px);
+  border-radius:3px 3px 0 0;
+  bottom:0;
+  display:block;
+  height:0%;
+  position:absolute;
+  width:100%
+}
+#score{
+  left:516px;
+  top:200px
+}
+#life{
+  height:98px;
+  left:734px;
+  top:257px;
+  width:132px
+}
+#life,#score{
+  position:absolute;
+  border:6px solid #ccd;
+  border-color:#ccd #668 #668 #bbc;
+  box-shadow:0 0 1px #000 inset;
+  padding:10px
+}
