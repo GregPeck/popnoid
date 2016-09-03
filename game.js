@@ -1771,7 +1771,7 @@ initBoard = function() {
 		imgs[imgsNames[i]].onload = function() {
 			displayHome();
 		}
-		imgs[imgsNames[i]].src = imgsNames[i]+".png";
+		imgs[imgsNames[i]].src = "assets/"+imgsNames[i]+".png";
 	}
 
 	sb = document.getElementById("bg").getContext("2d");
