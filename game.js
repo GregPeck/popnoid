@@ -196,6 +196,7 @@ BRICKR = function() {
 		this.explosionColor = [228,106,218];
 		this.type = "R";
 		this.value  = 50;
+		GAME.updateBricks();
 	}
 }
 BRICKT = function() {
@@ -226,7 +227,7 @@ BRICK = function(x, y, type) {
 			var newType = this.onCollid(ball);
 			if (newType==0) {
 				GAME.addText(this.x*34, this.y*20, this.value);
-				score+=this.value;
+				GAME.updateScore(this.value);
 				GAME.addExplosion(this.x*34, this.y*20, this.explosionColor, this.explosionSize);
 				GAME.nbBrick-=["G","R","N","M"].indexOf(this.type)!=-1 ? 0 : 1;
 				if (GAME.nbBrick==0) {
@@ -248,11 +249,13 @@ BRICK = function(x, y, type) {
 					}
 					GAME.addBonus(this.x*34, this.y*20,parseInt(bonusType));
 				}
+				GAME.updateBricks();
 			} else if (newType) {
 				var obj = new window["BRICK"+newType](this.x, this.y, newType);
 				for (var properties in obj) {
 					this[properties] = obj[properties];
 				}
+				GAME.updateBricks();
 			}
 		}
 	}
@@ -273,6 +276,57 @@ GAME = {
 	text:"",
 	life:1,
 	portalTime:10000,
+	updateBricks:function() {
+		ctx2.clearRect(0,0,476,500);
+		drawStar(444, 6, 19);
+		drawStar(328, 333, 10);
+		drawStar(146, 181, 17);
+		drawStar(153, 204, 15);
+		drawStar(303, 368, 12);
+		drawStar(312, 353, 14);
+		drawStar(112, 447, 15);
+		drawStar(170, 242, 11);
+		drawStar(169, 280, 13);
+		drawStar(184, 60, 12);
+		drawStar(61, 140, 16);
+		drawStar(28, 238, 18);
+		drawStar(291, 330, 11);
+		drawStar(143, 183, 10);
+		drawStar(350, 222, 11);
+		drawStar(253, 162, 13);
+		drawStar(200, 451, 11);
+		drawStar(55, 128, 17);
+		drawStar(361, 288, 11);
+		drawStar(178, 144, 15);
+		
+		// draw bricks
+		for (y=0; y<24; y++) {
+			for (x=0; x<14; x++) {
+				l=level[y][x];
+				if (l.type!="0") {
+					switch (l.type) {
+						case "R":
+						case "M":
+							drawBrick(x*34,y*20, 1, 1, 1, l.type);
+							break;	
+						default:
+							drawBrick(x*34,y*20, l.r, l.g, l.b, l.type);
+					}
+				}
+			}
+		}
+	},
+	//update score
+	updateScore: function(plus) {
+		score+=plus;
+		var number = score;
+		number = number.toString();
+		number = (GAME.mode=="career" ? "LEVEL" : "DARE")+ " "+GAME.level+" - "+("0000000"+number).substring(number.length);
+		sp.fillStyle = "#FFF";
+		sp.fillRect(522,206,370,45);
+		sp.fillStyle = "#F00";
+		drawDigits(707-10*number.length, 216, number, sp);
+	},
 	/**
 	 * Check if we can open a portal
 	 */
@@ -321,6 +375,8 @@ GAME = {
 		this.addBall(238,478,0);
 		this.balls[0].speed = 0;
 		this.wait = true;
+		this.updateScore(0);
+		this.updateBricks();
 	},
 	/**
 	 * Add a ball
@@ -640,7 +696,7 @@ MONSTER = function(x, y, type) {
 	 * Explode the monster
 	 */
 	this.explode = function() {
-		score+=1000;
+		GAME.updateScore(1000);
 		GAME.addText(this.x, this.y, 1000);
 		GAME.addExplosion(this.x, this.y, [255,255,255], 2);
 		for (var i=0; i<GAME.monsters.length; i++) {
@@ -1164,7 +1220,7 @@ BALL = function(x, y, angle) {
  * @param {RenderingContext} c
  */
 drawStar = function(x, y, size, c) {
-	if (!c) { c=ctx; }
+	if (!c) { c=ctx2; }
 	var g = c.createRadialGradient(x,y,0,x,y,size);
 	g.addColorStop(0, "rgba(255,255,255,0.7)");
 	g.addColorStop(0.10, "rgba(255,255,255,0.7)");
@@ -1203,49 +1259,20 @@ gameLoop = function() {
 		return;
 	}
 	window.requestAnimationFrame(gameLoop);
+	
 	var grd=ctx.createLinearGradient(0,0,476,500);
 	grd.addColorStop(0,"rgba(15, 0, 63,0.3)");
 	grd.addColorStop(1,"rgba(53, 1, 84,0.3)");
 	ctx.fillStyle = grd;
 	ctx.fillRect(0,0,476,500);
+	
+	ctx.drawImage(ctx2.canvas, 0, 0);
+	//ctx.clearRect(0,0,476,500);
 
-	drawStar(444, 6, 19);
-	drawStar(328, 333, 10);
-	drawStar(146, 181, 17);
-	drawStar(153, 204, 15);
-	drawStar(303, 368, 12);
-	drawStar(312, 353, 14);
-	drawStar(112, 447, 15);
-	drawStar(170, 242, 11);
-	drawStar(169, 280, 13);
-	drawStar(184, 60, 12);
-	drawStar(61, 140, 16);
-	drawStar(28, 238, 18);
-	drawStar(291, 330, 11);
-	drawStar(143, 183, 10);
-	drawStar(350, 222, 11);
-	drawStar(253, 162, 13);
-	drawStar(200, 451, 11);
-	drawStar(55, 128, 17);
-	drawStar(361, 288, 11);
-	drawStar(178, 144, 15);
+	
+	
 	var l,i;
-	// draw bricks
-	for (y=0; y<24; y++) {
-		for (x=0; x<14; x++) {
-			l=level[y][x];
-			if (l.type!="0") {
-				switch (l.type) {
-					case "R":
-					case "M":
-						drawBrick(x*34,y*20, 1, 1, 1, l.type);
-						break;	
-					default:
-						drawBrick(x*34,y*20, l.r, l.g, l.b, l.type);
-				}
-			}
-		}
-	}
+	
 	//update balls
 	for (i=0; i<GAME.balls.length; i++) {
 		if (!GAME.balls[i].update()) {
@@ -1255,6 +1282,7 @@ gameLoop = function() {
 			}
 		}
 	}
+	
 	//update sprites
 	for (i=0; i<GAME.sprites.length; i++) {
 		if (!GAME.sprites[i].update()) {
@@ -1277,16 +1305,7 @@ gameLoop = function() {
 			GAME.bonus.splice(i--,1);
 		}
 	}
-	//update score
-	if (GAME.mode=="career" || GAME.mode=="challenge") {
-		var number = score;
-		number = number.toString();
-		number = (GAME.mode=="career" ? "LEVEL" : "DARE")+ " "+GAME.level+" - "+("0000000"+number).substring(number.length);
-		sp.fillStyle = "#FFF";
-		sp.fillRect(522,206,370,45);
-		sp.fillStyle = "#F00";
-		drawDigits(707-10*number.length, 216, number, sp);
-	}
+	
 	//draw rope
 	if (GAME.players[0].rope) {
 		ctx.shadowBlur = 10;
@@ -1316,6 +1335,7 @@ gameLoop = function() {
 		ctx.fillRect(0,50,476,50); 
 		new TEXT2(GAME.textX,68,GAME.text,null, 2);
 	}
+	
 	ctx.shadowBlur = 0; 
 	//apply a glitch to canva
 	if (GAME.glitchMode) {
@@ -1332,6 +1352,7 @@ gameLoop = function() {
 		ctx.fillRect(50,370,376,70); 
 		new TEXT2(110,398,"click on the ball");
 	}
+	
 }
 /**
  * Glitch canva
@@ -1362,84 +1383,84 @@ glitch = function(x, y, width, height, x2, y2) {
  */
 drawBrick = function(x, y, r, g, b, type) {
 	if (r) {
-		ctx.fillStyle = "rgb("+r+","+g+","+b+")";
-		ctx.fillRect(x+2,y+2,30,16);
+		ctx2.fillStyle = "rgb("+r+","+g+","+b+")";
+		ctx2.fillRect(x+2,y+2,30,16);
 		
-		ctx.beginPath();
-		ctx.lineWidth = 1;
-		ctx.moveTo(x,y);
-		ctx.lineTo(x,y+20);
-		ctx.lineTo(x+34,y+20);
+		ctx2.beginPath();
+		ctx2.lineWidth = 1;
+		ctx2.moveTo(x,y);
+		ctx2.lineTo(x,y+20);
+		ctx2.lineTo(x+34,y+20);
 
-		ctx.moveTo(x+1,y+1);
-		ctx.lineTo(x+1,y+19);
-		ctx.lineTo(x+33,y+19);
+		ctx2.moveTo(x+1,y+1);
+		ctx2.lineTo(x+1,y+19);
+		ctx2.lineTo(x+33,y+19);
 
-		ctx.strokeStyle = "#765954";
-		ctx.stroke(); 
+		ctx2.strokeStyle = "#765954";
+		ctx2.stroke(); 
 
-		ctx.beginPath();
-		ctx.moveTo(x+1,y);
-		ctx.lineTo(x+34,y);
-		ctx.lineTo(x+34,y+20);
+		ctx2.beginPath();
+		ctx2.moveTo(x+1,y);
+		ctx2.lineTo(x+34,y);
+		ctx2.lineTo(x+34,y+20);
 
-		ctx.moveTo(x+2,y+1);
-		ctx.lineTo(x+33,y+1);
-		ctx.lineTo(x+33,y+19);
+		ctx2.moveTo(x+2,y+1);
+		ctx2.lineTo(x+33,y+1);
+		ctx2.lineTo(x+33,y+19);
 
-		ctx.strokeStyle = "#e5d7d4";
-		ctx.stroke(); 
+		ctx2.strokeStyle = "#e5d7d4";
+		ctx2.stroke(); 
 	}
 	if (type=="X" || type=="G") {
-		ctx.drawImage(imgs["e"], x+2, y+2);
+		ctx2.drawImage(imgs["e"], x+2, y+2);
 	}
 	if (type=="R" || type=="M") {
-		ctx.drawImage(imgs["t"], (type=="M" ? 44 : 14), 11, 30, 16,  x+2, y+2, 30, 16);
+		ctx2.drawImage(imgs["t"], (type=="M" ? 44 : 14), 11, 30, 16,  x+2, y+2, 30, 16);
 	}
 	if (["H","I","J"].indexOf(type)>-1) {
 		r*=1.2;
 		g*=1.2;
 		b*=1.2;
 
-		ctx.fillStyle = "rgb("+Math.round(r)+","+Math.round(g)+","+Math.round(b)+")";
-		ctx.shadowBlur = 10;
-		ctx.shadowColor = "#000";
+		ctx2.fillStyle = "rgb("+Math.round(r)+","+Math.round(g)+","+Math.round(b)+")";
+		ctx2.shadowBlur = 10;
+		ctx2.shadowColor = "#000";
 		if (type=="J") {
-			ctx.fillRect(x+4,y+4,7,12);
-			ctx.fillRect(x+13,y+4,7,12);
-			ctx.fillRect(x+22,y+4,7,12);
+			ctx2.fillRect(x+4,y+4,7,12);
+			ctx2.fillRect(x+13,y+4,7,12);
+			ctx2.fillRect(x+22,y+4,7,12);
 		}
 		if (type=="I") {
-			ctx.fillRect(x+4,y+4,11,12);
-			ctx.fillRect(x+18,y+4,11,12);
+			ctx2.fillRect(x+4,y+4,11,12);
+			ctx2.fillRect(x+18,y+4,11,12);
 		}
 		if (type=="H") {
-			ctx.fillRect(x+6,y+4,24,12)
+			ctx2.fillRect(x+6,y+4,24,12)
 		}
 	} else if (type=="T" || type=="F") {
-		ctx.beginPath();
-		ctx.arc(x+17, y+10, 8, 0, 2 * Math.PI, false);
-		ctx.fillStyle = "#000";
-		ctx.fill();
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = "#FFF";
-		ctx.stroke();
+		ctx2.beginPath();
+		ctx2.arc(x+17, y+10, 8, 0, 2 * Math.PI, false);
+		ctx2.fillStyle = "#000";
+		ctx2.fill();
+		ctx2.lineWidth = 3;
+		ctx2.strokeStyle = "#FFF";
+		ctx2.stroke();
 	} else if (type=="N") {
-		ctx.shadowOffsetX = 2;
-		ctx.shadowOffsetY = 2;
-		ctx.shadowBlur = 3;
-		ctx.shadowColor = "#000";
-		ctx.beginPath();
-		ctx.arc(x+17, y+10, 4, 0, 2 * Math.PI, false);
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = "#00F";
-		ctx.stroke();
-		ctx.fillStyle = "#FFF";
-		ctx.fill();
-		ctx.shadowOffsetX = 0;
-		ctx.shadowOffsetY = 0;
+		ctx2.shadowOffsetX = 2;
+		ctx2.shadowOffsetY = 2;
+		ctx2.shadowBlur = 3;
+		ctx2.shadowColor = "#000";
+		ctx2.beginPath();
+		ctx2.arc(x+17, y+10, 4, 0, 2 * Math.PI, false);
+		ctx2.lineWidth = 1;
+		ctx2.strokeStyle = "#00F";
+		ctx2.stroke();
+		ctx2.fillStyle = "#FFF";
+		ctx2.fill();
+		ctx2.shadowOffsetX = 0;
+		ctx2.shadowOffsetY = 0;
 	}
-	ctx.shadowBlur = 0; 
+	ctx2.shadowBlur = 0; 
 }
 /**
  * Init
@@ -1454,6 +1475,9 @@ init = function() {
 	GAME.monsters=[];
 
 	ctx = document.getElementById("c").getContext("2d");
+	canvas = document.createElement("CANVAS");
+	canvas.width = 476; canvas.height = 500;
+	ctx2 = canvas.getContext("2d");
 	if (GAME.intervalPortal) {
 		clearInterval(GAME.intervalPortal);
 	}
@@ -1771,7 +1795,7 @@ initBoard = function() {
 		imgs[imgsNames[i]].onload = function() {
 			displayHome();
 		}
-		imgs[imgsNames[i]].src = "assets/"+imgsNames[i]+".png";
+		imgs[imgsNames[i]].src = imgsNames[i]+".png";
 	}
 
 	sb = document.getElementById("bg").getContext("2d");
